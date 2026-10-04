@@ -1,0 +1,141 @@
+<script>
+  type Word = { element: HTMLSpanElement; letters: string[]; original: string };
+  type Line = { words: Word[] };
+
+  const characters = "01{}[]<>/*+=:;#@";
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const visualTexts: { words: Word[] }[] = [];
+  const activeTimers = new Map<Line, number>();
+  let nearView = new WeakMap<HTMLElement, boolean>();
+  let linesByTarget = new WeakMap<HTMLElement, Line>();
+  let entranceObserver: IntersectionObserver | undefined;
+  let headerHeight = -1;
+  let viewportWidth = -1;
+
+  const restore = (line: Line) => {
+    const timer = activeTimers.get(line);
+    if (timer !== undefined) window.clearInterval(timer);
+    activeTimers.delete(line);
+    line.words.forEach((word) => { word.element.textContent = word.original; });
+  };
+
+  const restoreAll = () => Array.from(activeTimers.keys()).forEach(restore);
+
+  const scramble = (line: Line) => {
+    if (reducedMotion.matches || document.hidden) return;
+    restore(line);
+
+    const length = line.words.reduce((total, word) => total + word.letters.length, 0);
+    let frame = 0;
+    const render = () => {
+      frame++;
+      const revealed = Math.floor((frame / 12) * length);
+      let offset = 0;
+      line.words.forEach((word) => {
+        word.element.textContent = word.letters
+          .map((letter, index) =>
+            offset + index < revealed
+              ? letter
+              : characters[Math.floor(Math.random() * characters.length)],
+          )
+          .join("");
+        offset += word.letters.length;
+      });
+      if (frame >= 12) restore(line);
+    };
+
+    render();
+    if (frame < 12) activeTimers.set(line, window.setInterval(render, 45));
+  };
+
+  document
+    .querySelectorAll<HTMLElement>("h1, h2, h3, h4, h5, h6, p, li, a, button, span")
+    .forEach((element) => {
+      if (element.closest('[aria-hidden="true"], .sr-only, .ascii-animated-text, [data-carousel-count]')) return;
+
+      Array.from(element.childNodes).forEach((node) => {
+        if (!(node instanceof Text)) return;
+        const original = node.textContent ?? "";
+        if (!original.trim()) return;
+
+        const visual = document.createElement("span");
+        visual.setAttribute("aria-hidden", "true");
+        const words: Word[] = [];
+        for (const part of original.match(/\s+|\S+/g) ?? []) {
+          if (!part.trim()) {
+            visual.append(document.createTextNode(part));
+          } else {
+            const wordElement = document.createElement("span");
+            wordElement.textContent = part;
+            visual.append(wordElement);
+            words.push({ element: wordElement, letters: Array.from(part), original: part });
+          }
+        }
+
+        const accessible = document.createElement("span");
+        accessible.className = "sr-only";
+        accessible.textContent = original;
+        node.replaceWith(visual, accessible);
+        visualTexts.push({ words });
+      });
+    });
+
+  const observeLines = () => {
+    const nextHeaderHeight = document.getElementById("header")?.getBoundingClientRect().height ?? 0;
+    const nextViewportWidth = window.innerWidth;
+    if (nextHeaderHeight === headerHeight && nextViewportWidth === viewportWidth) return;
+    headerHeight = nextHeaderHeight;
+    viewportWidth = nextViewportWidth;
+    restoreAll();
+    entranceObserver?.disconnect();
+    nearView = new WeakMap();
+    linesByTarget = new WeakMap();
+
+    entranceObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const target = entry.target as HTMLElement;
+          const wasNear = nearView.get(target);
+          nearView.set(target, entry.isIntersecting);
+          if (entry.isIntersecting && !wasNear) {
+            const line = linesByTarget.get(target);
+            if (line) scramble(line);
+          }
+        });
+      },
+      { rootMargin: `-${headerHeight}px 0px -8px 0px` },
+    );
+
+    visualTexts.forEach(({ words }) => {
+      let previousTop: number | undefined;
+      let line: Line | undefined;
+      words.forEach((word) => {
+        const top = word.element.getBoundingClientRect().top;
+        if (previousTop === undefined || Math.abs(top - previousTop) > 1) {
+          line = { words: [] };
+          linesByTarget.set(word.element, line);
+          entranceObserver?.observe(word.element);
+        }
+        line?.words.push(word);
+        previousTop = top;
+      });
+    });
+  };
+
+  observeLines();
+  window.addEventListener("resize", observeLines);
+  if (document.fonts.status === "loading") {
+    document.fonts.ready.then(() => {
+      viewportWidth = -1;
+      observeLines();
+    });
+  }
+  const header = document.getElementById("header");
+  if (header) new ResizeObserver(observeLines).observe(header);
+
+  const restoreIfInactive = () => {
+    if (reducedMotion.matches || document.hidden) restoreAll();
+  };
+  reducedMotion.addEventListener("change", restoreIfInactive);
+  document.addEventListener("visibilitychange", restoreIfInactive);
+</script>

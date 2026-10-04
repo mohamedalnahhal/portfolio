@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --accent-color: var(--light-accent-color, #018545);
+  --accent-to-color: var(--light-accent-to-color, #00ad5a);
+  --page-bg: #ffffff;
+  --surface: #ffffff;
+  --surface-muted: #f9fafb;
+  --surface-hover: #ffffff;
+  --pill-bg: #f3f4f6;
+  --pill-hover: #e5e7eb;
+  --text-strong: #111827;
+  --text-primary: #1f2937;
+  --text-body: #4b5563;
+  --text-muted: #6b7280;
+  --border: #e5e7eb;
+  --border-soft: #f3f4f6;
+  --border-strong: #d1d5db;
+  --grid-color: #e5e7eb;
+  --badge-bg: #111827;
+  --badge-text: #ffffff;
+  --footer-pattern: #f3f4f6;
+  --header-bg: rgb(255 255 255 / 80%);
+}
+
+:root.dark {
+  color-scheme: dark;
+  --accent-color: #00ff9c;
+  --accent-to-color: #3cffaa;
+  --page-bg: #0a0a0a;
+  --surface: #111713;
+  --surface-muted: #101512;
+  --surface-hover: #18241c;
+  --pill-bg: #1a2820;
+  --pill-hover: #274132;
+  --text-strong: #f1f7f3;
+  --text-primary: #e2ebe5;
+  --text-body: #aebdb3;
+  --text-muted: #91a499;
+  --border: #2a3b31;
+  --border-soft: #25332b;
+  --border-strong: #3a5142;
+  --grid-color: #203228;
+  --badge-bg: #153b2b;
+  --badge-text: #bfffdc;
+  --footer-pattern: #17291f;
+  --header-bg: rgb(10 10 10 / 85%);
+}
+
+body {
+  font-family: 'IBM Plex Mono', monospace;
+  position: relative;
+  isolation: isolate;
+  background: var(--page-bg);
+}
+
+.ascii-rain {
+  position: fixed;
+  z-index: 5;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  color: var(--accent-color);
+  opacity: 0.3;
+  mask-image: linear-gradient(to bottom, transparent, black 16%, black 72%, transparent);
+}
+
+.rain-column {
+  position: absolute;
+  top: 0;
+  font-size: clamp(0.7rem, 1.1vw, 0.95rem);
+  font-weight: 600;
+  line-height: 2.2;
+  text-align: center;
+  text-shadow: 0 0 8px color-mix(in srgb, var(--accent-color) 35%, transparent);
+  animation: ascii-fall linear infinite;
+}
+
+.rain-tile {
+  display: block;
+  white-space: pre;
+}
+
+.rain-one { left: 0; animation-duration: 38s; }
+.rain-two { left: 2.75rem; animation-duration: 44s; animation-delay: -21s; }
+.rain-four { right: 2.75rem; animation-duration: 41s; animation-delay: -32s; }
+.rain-five { right: 0; animation-duration: 36s; animation-delay: -17s; }
+
+@media (max-width: 1023px) {
+  .rain-two, .rain-four { display: none; }
+}
+
+@keyframes ascii-fall {
+  from { transform: translateY(-50%); }
+  to { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rain-column { animation: none; }
+}

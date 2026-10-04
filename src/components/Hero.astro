@@ -1,0 +1,813 @@
+---
+import { siteConfig } from "../config";
+import AsciiText from "./AsciiText.astro";
+
+const profileUrl = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/profile.png`;
+---
+
+<div
+  id="hero"
+  class="relative isolate flex min-h-screen flex-col overflow-hidden bg-[var(--page-bg)] pt-8"
+  style={`--portrait-image: url("${profileUrl}")`}
+>
+  <!-- Gradient overlay -->
+  <div
+    class="hero-glow absolute inset-0 -z-10"
+    style={`--light-glow: radial-gradient(ellipse 800px 1200px at 0% 0%, ${siteConfig.accentColor}40 0%, ${siteConfig.accentColor}25 20%, ${siteConfig.accentColor}10 40%, rgba(255, 255, 255, 0.3) 70%, rgba(255, 255, 255, 0.8) 90%, white 100%)`}
+  >
+  </div>
+  <div
+    aria-hidden="true"
+    class="hero-glow-orb hero-glow-orb-primary absolute -z-10"
+    style={`--light-orb: radial-gradient(ellipse at center, ${siteConfig.accentColor}55 0%, ${siteConfig.accentColor}25 38%, transparent 72%)`}
+  ></div>
+  <div
+    aria-hidden="true"
+    class="hero-glow-orb hero-glow-orb-secondary absolute -z-10"
+    style={`--light-orb: radial-gradient(ellipse at center, ${siteConfig.accentColor}40 0%, ${siteConfig.accentColor}18 42%, transparent 72%)`}
+  ></div>
+  <svg
+    aria-hidden="true"
+    class="hero-symbols absolute inset-0 -z-10 size-full stroke-[var(--grid-color)] [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
+  >
+    <defs>
+      <pattern
+        x="50%"
+        y={-1}
+        id="0787a7c5-978c-4f66-83c7-11c213f99cb7"
+        width={200}
+        height={200}
+        patternUnits="userSpaceOnUse"
+      >
+        <path d="M.5 200V.5H200" fill="none"></path>
+      </pattern>
+      <pattern
+        id="programming-symbols"
+        x="0"
+        y="0"
+        width="400"
+        height="400"
+        patternUnits="userSpaceOnUse"
+      >
+        <text
+          x="50"
+          y="50"
+          fill={siteConfig.accentColor}
+          font-family="monospace"
+          font-size="24"
+          transform="rotate(-15)">&lt;/&gt;</text
+        >
+        <text
+          x="150"
+          y="100"
+          fill={siteConfig.accentColor}
+          font-family="monospace"
+          font-size="20"
+          transform="rotate(10)">{}</text
+        >
+        <text
+          x="250"
+          y="80"
+          fill={siteConfig.accentColor}
+          font-family="monospace"
+          font-size="18"
+          transform="rotate(-5)">=&gt;</text
+        >
+        <text
+          x="100"
+          y="200"
+          fill={siteConfig.accentColor}
+          font-family="monospace"
+          font-size="22"
+          transform="rotate(15)">[]</text
+        >
+        <text
+          x="300"
+          y="180"
+          fill={siteConfig.accentColor}
+          font-family="monospace"
+          font-size="20"
+          transform="rotate(-10)">&lt;&gt;</text
+        >
+        <text
+          x="200"
+          y="250"
+          fill={siteConfig.accentColor}
+          font-family="monospace"
+          font-size="24"
+          transform="rotate(5)">()</text
+        >
+        <text
+          x="50"
+          y="320"
+          fill={siteConfig.accentColor}
+          font-family="monospace"
+          font-size="18"
+          transform="rotate(-8)">::</text
+        >
+        <text
+          x="350"
+          y="300"
+          fill={siteConfig.accentColor}
+          font-family="monospace"
+          font-size="22"
+          transform="rotate(12)">==</text
+        >
+        <text
+          x="150"
+          y="350"
+          fill={siteConfig.accentColor}
+          font-family="monospace"
+          font-size="20"
+          transform="rotate(-15)">++</text
+        >
+        <text
+          x="250"
+          y="370"
+          fill={siteConfig.accentColor}
+          font-family="monospace"
+          font-size="24"
+          transform="rotate(8)">;</text
+        >
+      </pattern>
+    </defs>
+    <rect
+      fill="url(#programming-symbols)"
+      width="100%"
+      height="100%"
+      opacity="0.2"></rect>
+    <rect
+      fill="url(#0787a7c5-978c-4f66-83c7-11c213f99cb7)"
+      width="100%"
+      height="100%"
+      stroke-width={0}></rect>
+  </svg>
+  <div
+    class="hero-content mx-auto grid w-full flex-1 grid-cols-1 items-center gap-8 p-8 sm:p-12 md:grid-cols-[minmax(0,1.1fr)_minmax(18rem,0.9fr)] md:p-20 lg:gap-12 lg:p-24"
+  >
+    <div class="hero-copy relative z-10">
+      <h2
+        class="text-pretty text-xl sm:text-2xl md:text-5xl font-bold tracking-tight text-[var(--text-primary)] animate-fade-in"
+      >
+        Hello! 👋
+      </h2>
+      <h1
+        class="mt-6 sm:mt-8 md:mt-10 text-pretty text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold tracking-tight text-[var(--text-primary)] animate-fade-in animation-delay-200"
+      >
+        I'm <AsciiText text={siteConfig.name} />
+      </h1>
+      <p
+        class="mt-4 sm:mt-6 md:mt-8 text-pretty text-base sm:text-lg md:text-xl/8 font-medium text-[var(--text-body)] animate-fade-in animation-delay-400"
+      >
+        {siteConfig.title}
+      </p>
+    </div>
+    <div
+      class="portrait-stage is-loading relative mx-auto"
+      role="img"
+      aria-label={`Animated ASCII portrait of ${siteConfig.name}`}
+    >
+      <img
+        class="portrait-photo absolute inset-0 h-full w-full object-cover"
+        src={profileUrl}
+        alt={`${siteConfig.name} portrait`}
+        width="1024"
+        height="1024"
+        fetchpriority="high"
+      />
+      <div class="portrait-scan-band absolute inset-0" aria-hidden="true">
+        <div class="portrait-photo-fade absolute inset-0"></div>
+        <canvas class="portrait-ascii-canvas absolute inset-0 h-full w-full"></canvas>
+      </div>
+      <div class="portrait-glitch-layer absolute inset-0" aria-hidden="true">
+        <div class="portrait-photo-fade absolute inset-0"></div>
+        <canvas class="portrait-glitch-canvas absolute inset-0 h-full w-full"></canvas>
+      </div>
+    </div>
+  </div>
+  <noscript>
+    <style>
+      .portrait-stage.is-loading { opacity: 1 !important; }
+    </style>
+  </noscript>
+  <div
+    class="relative z-10 mx-auto flex w-full max-w-[90rem] justify-center gap-x-4 px-8 pb-8 text-[var(--text-primary)] animate-fade-in animation-delay-600 sm:gap-x-6 sm:px-12 sm:pb-12 md:justify-start md:gap-x-8 md:px-20 md:pb-20 lg:px-24 lg:pb-24"
+  >
+    {
+      siteConfig.social?.email && (
+        <a
+          href={`mailto:${siteConfig.social.email}`}
+          aria-label="Email"
+          class="transition-colors duration-300 hover:text-[var(--accent-color)]"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z" />
+            <path d="M3 7l9 6l9 -6" />
+          </svg>
+        </a>
+      )
+    }
+    {
+      siteConfig.social?.linkedin && (
+        <a
+          href={siteConfig.social.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="LinkedIn"
+          class="transition-colors duration-300 hover:text-[var(--accent-color)]"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8"
+          >
+            <>
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M8 11v5" />
+              <path d="M8 8v.01" />
+              <path d="M12 16v-5" />
+              <path d="M16 16v-3a2 2 0 1 0 -4 0" />
+              <path d="M3 7a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4z" />
+            </>
+          </svg>
+        </a>
+      )
+    }
+    {
+      siteConfig.social?.twitter && (
+        <a
+          href={siteConfig.social.twitter}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Twitter"
+          class="transition-colors duration-300 hover:text-[var(--accent-color)]"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8"
+          >
+            <>
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M4 4l11.733 16h4.267l-11.733 -16z" />
+              <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772" />
+            </>
+          </svg>
+        </a>
+      )
+    }
+    {
+      siteConfig.social?.github && (
+        <a
+          href={siteConfig.social.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="GitHub"
+          class="transition-colors duration-300 hover:text-[var(--accent-color)]"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8"
+          >
+            <>
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+            </>
+          </svg>
+        </a>
+      )
+    }
+  </div>
+</div>
+
+<script>
+  const canvas = document.querySelector<HTMLCanvasElement>(
+    '#hero .portrait-ascii-canvas',
+  );
+  const glitchCanvas = document.querySelector<HTMLCanvasElement>(
+    '#hero .portrait-glitch-canvas',
+  );
+  const glitchLayer = document.querySelector<HTMLElement>(
+    '#hero .portrait-glitch-layer',
+  );
+  const portraitStage = document.querySelector<HTMLElement>(
+    '#hero .portrait-stage',
+  );
+  const photo = document.querySelector<HTMLImageElement>('#hero .portrait-photo');
+
+  if (canvas && glitchCanvas && glitchLayer && portraitStage && photo) {
+    const context = canvas.getContext('2d');
+    const glitchContext = glitchCanvas.getContext('2d');
+    const sourceCanvas = document.createElement('canvas');
+    const sourceContext = sourceCanvas.getContext('2d', {
+      willReadFrequently: true,
+    });
+
+    if (context && glitchContext && sourceContext) {
+      const characters = '01{}[]<>/*+=:;#@';
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      let imagePixels: Uint8ClampedArray;
+      let cells: string[][] = [];
+      let width = 0;
+      let height = 0;
+      let cellWidth = 0;
+      let cellHeight = 0;
+      let interval: number | undefined;
+      let visible = false;
+      let introPlayed = false;
+
+      glitchLayer.addEventListener('animationend', (event) => {
+        if (event.animationName !== 'portrait-glitch-intro') return;
+        glitchLayer.classList.remove('is-intro');
+        if (!reducedMotion.matches) glitchLayer.classList.add('is-looping');
+      });
+
+      reducedMotion.addEventListener('change', () => {
+        if (reducedMotion.matches) {
+          glitchLayer.classList.remove('is-intro', 'is-looping');
+        } else if (introPlayed) {
+          glitchLayer.classList.add('is-looping');
+        } else if (width && height) {
+          introPlayed = true;
+          glitchLayer.classList.add('is-intro');
+        }
+      });
+
+      const randomCharacter = () =>
+        characters.charAt(Math.floor(Math.random() * characters.length));
+
+      const draw = (animate: boolean) => {
+        context.clearRect(0, 0, width, height);
+
+        for (let row = 0; row < cells.length; row++) {
+          for (let column = 0; column < cells[row].length; column++) {
+            if (animate && Math.random() < 0.12) {
+              cells[row][column] = randomCharacter();
+            }
+
+            const x = column * cellWidth;
+            const y = row * cellHeight;
+            const sourceX = Math.min(
+              sourceCanvas.width - 1,
+              Math.floor(((x + cellWidth / 2) / width) * sourceCanvas.width),
+            );
+            const sourceY = Math.min(
+              sourceCanvas.height - 1,
+              Math.floor(((y + cellHeight / 2) / height) * sourceCanvas.height),
+            );
+            const pixel = (sourceY * sourceCanvas.width + sourceX) * 4;
+
+            if (imagePixels[pixel + 3] < 32) continue;
+
+            context.fillText(cells[row][column], x, y);
+          }
+        }
+
+        glitchContext.clearRect(0, 0, glitchCanvas.width, glitchCanvas.height);
+        glitchContext.drawImage(canvas, 0, 0);
+      };
+
+      const syncAccent = (redraw = true) => {
+        context.fillStyle = getComputedStyle(portraitStage)
+          .getPropertyValue('--accent-color')
+          .trim();
+        if (redraw && width && height && imagePixels) draw(false);
+      };
+
+      const resize = () => {
+        const bounds = canvas.getBoundingClientRect();
+        width = bounds.width;
+        height = bounds.height;
+        if (!width || !height) return;
+
+        const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(width * pixelRatio);
+        canvas.height = Math.round(height * pixelRatio);
+        glitchCanvas.width = canvas.width;
+        glitchCanvas.height = canvas.height;
+        context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+
+        const fontSize = Math.max(10, Math.min(16, width / 32));
+        context.font = `600 ${fontSize}px "IBM Plex Mono", monospace`;
+        context.textBaseline = 'middle';
+        syncAccent(false);
+        cellWidth = context.measureText('M').width;
+        cellHeight = fontSize * 1.25;
+        cells = Array.from(
+          { length: Math.ceil(height / cellHeight) },
+          () => Array.from({ length: Math.ceil(width / cellWidth) }, randomCharacter),
+        );
+        draw(false);
+
+        if (!introPlayed && !reducedMotion.matches) {
+          introPlayed = true;
+          glitchLayer.classList.add('is-intro');
+        }
+        portraitStage.classList.remove('is-loading');
+      };
+
+      const stop = () => {
+        if (interval !== undefined) window.clearInterval(interval);
+        interval = undefined;
+      };
+
+      const updateMotion = () => {
+        stop();
+        if (visible && !reducedMotion.matches) {
+          interval = window.setInterval(() => draw(true), 120);
+        }
+      };
+
+      photo.decode().then(() => {
+        sourceCanvas.width = photo.naturalWidth;
+        sourceCanvas.height = photo.naturalHeight;
+        sourceContext.drawImage(photo, 0, 0);
+        imagePixels = sourceContext.getImageData(
+          0,
+          0,
+          sourceCanvas.width,
+          sourceCanvas.height,
+        ).data;
+
+        const resizeObserver = new ResizeObserver(resize);
+        resizeObserver.observe(canvas);
+
+        new MutationObserver(() => syncAccent()).observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ['class'],
+        });
+
+        const visibilityObserver = new IntersectionObserver(([entry]) => {
+          visible = entry.isIntersecting;
+          updateMotion();
+        });
+        visibilityObserver.observe(canvas);
+        reducedMotion.addEventListener('change', updateMotion);
+      }).catch(() => portraitStage.classList.remove('is-loading'));
+    } else {
+      portraitStage.classList.remove('is-loading');
+    }
+  } else {
+    portraitStage?.classList.remove('is-loading');
+  }
+</script>
+
+<style>
+  .hero-content {
+    max-width: 90rem;
+  }
+
+  .portrait-stage {
+    width: clamp(17rem, 37vw, 34rem);
+    aspect-ratio: 1;
+    isolation: isolate;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  .portrait-stage.is-loading {
+    opacity: 0;
+  }
+
+  .portrait-photo {
+    border-radius: inherit;
+    object-position: center 35%;
+  }
+
+  .portrait-photo-fade {
+    background: var(--page-bg);
+    opacity: 0.85;
+    mask-image: var(--portrait-image);
+    -webkit-mask-image: var(--portrait-image);
+    mask-size: cover;
+    -webkit-mask-size: cover;
+    mask-position: center 35%;
+    -webkit-mask-position: center 35%;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+  }
+
+  .portrait-ascii-canvas,
+  .portrait-glitch-canvas {
+    mask-image: var(--portrait-image);
+    -webkit-mask-image: var(--portrait-image);
+    mask-size: cover;
+    -webkit-mask-size: cover;
+    mask-position: center 35%;
+    -webkit-mask-position: center 35%;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+  }
+
+  .portrait-scan-band {
+    isolation: isolate;
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 50%,
+      black 53.7%,
+      black 55.3%,
+      transparent 59%
+    );
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 50%,
+      black 53.7%,
+      black 55.3%,
+      transparent 59%
+    );
+    mask-size: 100% 200%;
+    -webkit-mask-size: 100% 200%;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    mask-position: 0 118%;
+    -webkit-mask-position: 0 118%;
+    animation: portrait-ascii-reveal 7s linear infinite;
+  }
+
+  .portrait-glitch-layer {
+    opacity: 0;
+    pointer-events: none;
+    will-change: opacity, clip-path, transform;
+  }
+
+  .portrait-glitch-layer.is-intro {
+    animation: portrait-glitch-intro 2.8s linear both;
+  }
+
+  .portrait-glitch-layer.is-looping {
+    animation: portrait-glitch-wave 9s linear infinite;
+  }
+
+  @media (max-width: 767px) {
+    .hero-content {
+      gap: 2rem;
+    }
+
+    .hero-copy {
+      text-align: center;
+    }
+
+    .portrait-stage {
+      width: min(67vw, 19rem);
+    }
+  }
+
+  @keyframes portrait-ascii-reveal {
+    to {
+      mask-position: 0 0;
+      -webkit-mask-position: 0 0;
+    }
+  }
+
+  @keyframes portrait-glitch-intro {
+    0%,
+    50% {
+      opacity: 1;
+      clip-path: inset(0);
+      transform: translateX(0);
+    }
+    55% {
+      opacity: 0.25;
+      clip-path: inset(0 0 58% 0);
+      transform: translateX(3px);
+    }
+    60% {
+      opacity: 1;
+      clip-path: inset(0);
+      transform: translateX(-3px);
+    }
+    65% {
+      opacity: 0;
+      clip-path: inset(0);
+      transform: translateX(2px);
+    }
+    70% {
+      opacity: 0.85;
+      clip-path: inset(0);
+      transform: translateX(0);
+    }
+    78%,
+    100% {
+      opacity: 0;
+      clip-path: inset(0 0 100% 0);
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes portrait-glitch-wave {
+    0%,
+    64%,
+    75%,
+    100% {
+      opacity: 0;
+      clip-path: inset(0 0 100% 0);
+      transform: translateX(0);
+    }
+    65% {
+      opacity: 0.9;
+      clip-path: inset(0 0 72% 0);
+      transform: translateX(2px);
+    }
+    67% {
+      opacity: 1;
+      clip-path: inset(34% 0 38% 0);
+      transform: translateX(-3px);
+    }
+    69% {
+      opacity: 0.9;
+      clip-path: inset(68% 0 0 0);
+      transform: translateX(2px);
+    }
+    70% {
+      opacity: 0;
+      clip-path: inset(100% 0 0 0);
+      transform: translateX(0);
+    }
+    71%,
+    73% {
+      opacity: 1;
+      clip-path: inset(0);
+      transform: translateX(-2px);
+    }
+    72%,
+    74% {
+      opacity: 0;
+      clip-path: inset(0);
+      transform: translateX(2px);
+    }
+  }
+
+  .hero-glow {
+    background-image: var(--light-glow);
+    background-size: 150% 150%;
+    animation: glow-drift 31s ease-in-out infinite;
+  }
+
+  :global(.dark) .hero-glow {
+    background-image: radial-gradient(
+      ellipse 800px 1200px at 0% 0%,
+      color-mix(in srgb, var(--accent-color) 25%, transparent) 0%,
+      color-mix(in srgb, var(--accent-color) 15%, transparent) 20%,
+      color-mix(in srgb, var(--accent-color) 6%, transparent) 40%,
+      rgb(10 10 10 / 30%) 70%,
+      rgb(10 10 10 / 80%) 90%,
+      var(--page-bg) 100%
+    );
+  }
+
+  .hero-symbols text {
+    fill: var(--accent-color);
+  }
+
+  .hero-glow-orb {
+    width: min(72vw, 900px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    filter: blur(52px);
+    opacity: 0.8;
+    will-change: transform;
+  }
+
+  .hero-glow-orb-primary {
+    top: -38%;
+    left: -24%;
+    background-image: var(--light-orb);
+    animation: orb-drift-primary 37s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  }
+
+  :global(.dark) .hero-glow-orb-primary {
+    background-image: radial-gradient(ellipse at center, color-mix(in srgb, var(--accent-color) 33%, transparent), color-mix(in srgb, var(--accent-color) 15%, transparent) 38%, transparent 72%);
+  }
+
+  .hero-glow-orb-secondary {
+    top: 8%;
+    right: -35%;
+    width: min(58vw, 720px);
+    opacity: 0.6;
+    background-image: var(--light-orb);
+    animation: orb-drift-secondary 47s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  :global(.dark) .hero-glow-orb-secondary {
+    background-image: radial-gradient(ellipse at center, color-mix(in srgb, var(--accent-color) 25%, transparent), color-mix(in srgb, var(--accent-color) 9%, transparent) 42%, transparent 72%);
+  }
+
+  @keyframes glow-drift {
+    0% {
+      background-position: 0% 0%;
+    }
+    38% {
+      background-position: 82% 22%;
+    }
+    71% {
+      background-position: 34% 88%;
+    }
+    100% {
+      background-position: 100% 55%;
+    }
+  }
+
+  @keyframes orb-drift-primary {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    29% {
+      transform: translate3d(30vw, 18vh, 0) scale(1.08);
+    }
+    63% {
+      transform: translate3d(52vw, 4vh, 0) scale(0.92);
+    }
+    84% {
+      transform: translate3d(24vw, 32vh, 0) scale(1.04);
+    }
+  }
+
+  @keyframes orb-drift-secondary {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) scale(0.95);
+    }
+    23% {
+      transform: translate3d(-24vw, 22vh, 0) scale(1.08);
+    }
+    57% {
+      transform: translate3d(-48vw, -8vh, 0) scale(0.9);
+    }
+    79% {
+      transform: translate3d(-30vw, 28vh, 0) scale(1.04);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-glow,
+    .hero-glow-orb,
+    .portrait-scan-band,
+    .portrait-glitch-layer.is-intro,
+    .portrait-glitch-layer.is-looping {
+      animation: none;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animation-delay-200 {
+    animation-delay: 0.2s;
+  }
+
+  .animation-delay-400 {
+    animation-delay: 0.4s;
+  }
+
+  .animation-delay-600 {
+    animation-delay: 0.6s;
+  }
+</style>

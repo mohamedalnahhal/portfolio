@@ -1,0 +1,240 @@
+---
+const { text } = Astro.props;
+---
+
+<span class="ascii-animated-text" aria-hidden="true">{text}</span><span class="sr-only">{text}</span>
+
+<script>
+  const characters = '01{}[]<>/*+=:;#@';
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  document.querySelectorAll<HTMLElement>('.ascii-animated-text').forEach((element) => {
+    const original = element.textContent ?? '';
+    const letters = Array.from(original);
+    let idleTimer: number | undefined;
+    let hoverTimer: number | undefined;
+    let hoveredIndex: number | null = null;
+    let visible = false;
+    let idleLineIndex = 0;
+    const scrollTimers = new Map<number, number>();
+    let displayed = letters.slice();
+
+    const randomCharacter = () =>
+      characters.charAt(Math.floor(Math.random() * characters.length));
+
+    const reset = () => {
+      window.clearTimeout(idleTimer);
+      window.clearInterval(hoverTimer);
+      scrollTimers.forEach((timer) => window.clearInterval(timer));
+      scrollTimers.clear();
+      displayed = letters.slice();
+      element.textContent = original;
+    };
+
+    const scheduleScramble = (delay = 2200) => {
+      if (reducedMotion.matches || document.hidden || !visible || hoveredIndex !== null) return;
+      idleTimer = window.setTimeout(() => {
+        if (reducedMotion.matches || document.hidden || !visible) return;
+        const line = lines[idleLineIndex % lines.length];
+        if (!line) return;
+        idleLineIndex++;
+        playLineScramble(line.start, line.end);
+      }, delay);
+    };
+
+    const animateHoveredCharacter = () => {
+      element.textContent = letters
+        .map((letter, index) =>
+          index === hoveredIndex && letter !== ' ' ? randomCharacter() : letter,
+        )
+        .join('');
+    };
+
+    const setHoveredIndex = (index: number | null) => {
+      if (index === hoveredIndex) return;
+      reset();
+      hoveredIndex = index;
+
+      if (index === null) {
+        scheduleScramble(900);
+      } else if (!reducedMotion.matches && !document.hidden) {
+        animateHoveredCharacter();
+        hoverTimer = window.setInterval(animateHoveredCharacter, 70);
+      }
+    };
+
+    const handlePointer = (event: PointerEvent) => {
+      if (event.pointerType === 'touch' || reducedMotion.matches) return;
+      const textNode = element.firstChild;
+      if (!textNode || textNode.nodeType !== Node.TEXT_NODE) return;
+
+      const range = document.createRange();
+      const displayedLetters = Array.from(textNode.textContent ?? '');
+      let offset = 0;
+      let indexUnderPointer: number | null = null;
+
+      for (let index = 0; index < letters.length; index++) {
+        const length = displayedLetters[index]?.length ?? 0;
+        range.setStart(textNode, offset);
+        range.setEnd(textNode, offset + length);
+        offset += length;
+
+        const rect = range.getBoundingClientRect();
+        if (
+          event.clientX >= rect.left &&
+          event.clientX <= rect.right &&
+          event.clientY >= rect.top &&
+          event.clientY <= rect.bottom
+        ) {
+          indexUnderPointer = index;
+          break;
+        }
+      }
+
+      setHoveredIndex(indexUnderPointer);
+    };
+
+    const updateMotion = () => {
+      hoveredIndex = null;
+      reset();
+      scheduleScramble(1100);
+    };
+
+    element.addEventListener('pointerenter', handlePointer);
+    element.addEventListener('pointermove', handlePointer);
+    element.addEventListener('pointerleave', () => setHoveredIndex(null));
+    document.addEventListener('visibilitychange', updateMotion);
+    reducedMotion.addEventListener('change', updateMotion);
+    const playLineScramble = (start: number, end: number) => {
+      if (reducedMotion.matches || document.hidden) return;
+      if (!scrollTimers.size) {
+        window.clearTimeout(idleTimer);
+        window.clearInterval(hoverTimer);
+        hoveredIndex = null;
+        displayed = letters.slice();
+      }
+
+      const previousTimer = scrollTimers.get(start);
+      if (previousTimer !== undefined) window.clearInterval(previousTimer);
+      let cursor = start;
+      const timer = window.setInterval(() => {
+        for (let index = start; index < end; index++) {
+          displayed[index] = index < cursor || letters[index] === ' '
+            ? letters[index]
+            : randomCharacter();
+        }
+        element.textContent = displayed.join('');
+        cursor++;
+        if (cursor > end) {
+          window.clearInterval(timer);
+          scrollTimers.delete(start);
+          for (let index = start; index < end; index++) displayed[index] = letters[index];
+          element.textContent = displayed.join('');
+          if (!scrollTimers.size) scheduleScramble();
+        }
+      }, 70);
+      scrollTimers.set(start, timer);
+    };
+
+    type TextLine = { start: number; end: number; near: boolean };
+    let lines: TextLine[] = [];
+    let measuredWidth = -1;
+    let measuredHeaderHeight = -1;
+
+    const updateLines = () => {
+      const textNode = element.firstChild;
+      if (!(textNode instanceof Text)) return;
+      const headerHeight = document.getElementById('header')?.getBoundingClientRect().height ?? 0;
+      let anyVisible = false;
+
+      lines.forEach((line) => {
+        const range = document.createRange();
+        range.setStart(textNode, line.start);
+        range.setEnd(textNode, line.end);
+        const rect = range.getBoundingClientRect();
+        const near = rect.bottom > headerHeight && rect.top < window.innerHeight - 8;
+        if (near && !line.near) {
+          playLineScramble(line.start, line.end);
+        }
+        line.near = near;
+        anyVisible ||= near;
+      });
+      if (!anyVisible) window.clearTimeout(idleTimer);
+      visible = anyVisible;
+    };
+
+    const rebuildLines = () => {
+      const nextWidth = element.getBoundingClientRect().width;
+      const nextHeaderHeight = document.getElementById('header')?.getBoundingClientRect().height ?? 0;
+      if (nextWidth === measuredWidth && nextHeaderHeight === measuredHeaderHeight) return;
+      measuredWidth = nextWidth;
+      measuredHeaderHeight = nextHeaderHeight;
+      reset();
+      lines = [];
+      const textNode = element.firstChild;
+      if (!(textNode instanceof Text)) return;
+      let previousTop: number | undefined;
+      for (const match of original.matchAll(/\S+/g)) {
+        const start = match.index;
+        const end = start + match[0].length;
+        const range = document.createRange();
+        range.setStart(textNode, start);
+        range.setEnd(textNode, end);
+        const top = range.getBoundingClientRect().top;
+        if (previousTop === undefined || Math.abs(top - previousTop) > 1) {
+          lines.push({ start, end, near: false });
+        } else {
+          lines[lines.length - 1].end = end;
+        }
+        previousTop = top;
+      }
+      updateLines();
+    };
+
+    let frameRequested = false;
+    window.addEventListener('scroll', () => {
+      if (frameRequested) return;
+      frameRequested = true;
+      window.requestAnimationFrame(() => {
+        frameRequested = false;
+        updateLines();
+      });
+    }, { passive: true });
+    rebuildLines();
+    window.addEventListener('resize', rebuildLines);
+    if (document.fonts.status === 'loading') {
+      document.fonts.ready.then(() => {
+        measuredWidth = -1;
+        rebuildLines();
+      });
+    }
+    const header = document.getElementById('header');
+    if (header) new ResizeObserver(rebuildLines).observe(header);
+  });
+</script>
+
+<style is:global>
+  .ascii-animated-text {
+    color: transparent;
+    background-image: linear-gradient(
+      110deg,
+      var(--accent-color) 0%,
+      var(--accent-color) 15%,
+      var(--accent-to-color) 85%,
+      var(--accent-to-color) 100%
+    );
+    background-size: 120% 100%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    animation: ascii-gradient-shift 9s ease-in-out infinite;
+  }
+
+  @keyframes ascii-gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ascii-animated-text { animation: none; }
+  }
+</style>

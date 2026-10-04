@@ -1,0 +1,56 @@
+---
+import { siteConfig } from "../config";
+
+const hasProjects = siteConfig.projects && siteConfig.projects.length > 0;
+const hasExperience = siteConfig.experience && siteConfig.experience.length > 0;
+const hasEducation = siteConfig.education && siteConfig.education.length > 0;
+const sectionLinks = {
+  about: { label: "About", visible: true },
+  projects: { label: "Projects", visible: hasProjects },
+  experience: { label: "Experience", visible: hasExperience },
+  education: { label: "Education", visible: hasEducation },
+};
+---
+
+<header
+  id="header"
+  class="fixed top-0 left-0 right-0 z-50 hidden md:block transition-all duration-300"
+>
+  <nav class="max-w-7xl mx-auto px-8 py-4">
+    <ul class="flex items-center gap-8 justify-center">
+      {siteConfig.sections.map((section) => {
+        const link = sectionLinks[section];
+        return link?.visible && (
+          <li>
+            <a
+              href={`#${section}`}
+              class="text-[var(--text-primary)] hover:text-[var(--accent-color)] transition-colors font-medium"
+            >
+              {link.label}
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const updateHeader = () => {
+    const header = document.getElementById("header");
+    header?.classList.toggle("is-scrolled", window.scrollY > 100);
+  };
+  window.addEventListener("scroll", updateHeader, { passive: true });
+  updateHeader();
+</script>
+
+<style>
+  header.is-scrolled {
+    background-color: var(--header-bg);
+    backdrop-filter: blur(4px);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+</style>
