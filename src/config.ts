@@ -37,7 +37,7 @@ export const siteConfig = {
     {
       company: "Palestinian Ministry of National Economy",
       title: "Web Developer",
-      dateRange: "Jul 2026 - Sep 2026",
+      dateRange: "July 2026 - September 2026",
       bullets: [
         "Built 12+ modules and resolved 170+ tickets across two government systems",
         "Maintained and fixed bugs for CTRS, a government company and trader registration system",
@@ -48,7 +48,7 @@ export const siteConfig = {
     {
       company: "Jawwal",
       title: "Internship (online)",
-      dateRange: "Jun 2026 - Sep 2026",
+      dateRange: "June 2026 - September 2026",
       bullets: [
         "Broad exposure to company IT functions: networks, QA, database administration, backend, and frontend",
         "Completed 183 working hours",
@@ -57,7 +57,7 @@ export const siteConfig = {
     {
       company: "Al-Shifa Medical Complex",
       title: "Training (partial)",
-      dateRange: "Jun 2026",
+      dateRange: "June 2026",
       bullets: ["Partial training focused on computer networks"],
     },
   ],
@@ -125,8 +125,21 @@ export const siteConfig = {
     {
       school: "Gaza Sky Geeks",
       degree: "Beyond the Code Training Program",
-      dateRange: "May 2026 - Jul 2026",
-      achievements: ["Completed the Beyond the Code Training Program"],
+      dateRange: "May 2026 - July 2026",
+      achievements: [
+        "Completed 35 hours of training",
+        "Learned advanced development concepts and security practices",
+        "Built a multi-module platform as a final project",
+      ],
+    },
+    {
+      school: "Green Armor Academy",
+      degree: "Capture the Flag (CTF) Bootcamp",
+      dateRange: "April 2026 - May 2026",
+      achievements: [
+        "Completed the Capture the Flag (CTF) Bootcamp",
+        "Achieved 4th place in the final CTF competition",
+      ],
     },
   ],
 };
